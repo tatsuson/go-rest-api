@@ -11,11 +11,13 @@ import (
 )
 
 func NewDB() *gorm.DB {
-	if os.Getenv("GO_ENV") == "dev" {
-		err := godotenv.Load()
-		if err != nil {
-			log.Fatalln(err)
-		}
+	envPath := os.Getenv("ENV_PATH") // ENV_PATH環境変数からパスを取得
+	if envPath == "" {
+		envPath = ".env" // デフォルトのパスを設定
+	}
+	err := godotenv.Load(envPath)
+	if err != nil {
+		log.Fatalf("Error loading .env file: %v", err)
 	}
 	// MySQL接続用のDSN（Data Source Name）を設定
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
